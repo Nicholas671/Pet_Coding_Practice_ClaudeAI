@@ -97,15 +97,15 @@ function CharacterBuilder() {
   return (
     <>
       <Navbar />
-      <div style={styles.page}>
-        <div style={styles.panel} className="parchment-panel">
-          <div style={styles.headerBar} />
-          <h2 style={styles.title}>Forge a Character</h2>
-          <p style={styles.subtitle}>Choose your lineage and destiny</p>
+      <div className="builder-page">
+        <div className="builder-panel parchment-panel">
+          <div className="builder-header-bar" />
+          <h2 className="builder-title">Forge a Character</h2>
+          <p className="builder-subtitle">Choose your lineage and destiny</p>
 
-          <form onSubmit={handleSubmit} style={styles.form}>
+          <form onSubmit={handleSubmit} className="builder-form">
 
-            <label style={styles.label}>Name</label>
+            <label className="builder-label">Name</label>
             <input
               name="name"
               placeholder="What shall they be called?"
@@ -114,16 +114,16 @@ function CharacterBuilder() {
               className="parchment-input"
             />
 
-            <div style={styles.row}>
-              <div style={styles.col}>
-                <label style={styles.label}>Race</label>
+            <div className="builder-row">
+              <div className="builder-col">
+                <label className="builder-label">Race</label>
                 <select name="race" value={form.race} onChange={handleFormChange} className="parchment-input">
                   <option value="" disabled>Select Race...</option>
                   {RACES.map((r) => <option key={r}>{r}</option>)}
                 </select>
               </div>
-              <div style={styles.col}>
-                <label style={styles.label}>Class</label>
+              <div className="builder-col">
+                <label className="builder-label">Class</label>
                 <select name="class" value={form.class} onChange={handleFormChange} className="parchment-input">
                   <option value="" disabled>Select Class...</option>
                   {CLASSES.map((c) => <option key={c}>{c}</option>)}
@@ -132,9 +132,8 @@ function CharacterBuilder() {
             </div>
 
             {showStats && (
-              <div style={styles.statsPanel} className="stone-panel">
-                {/* Live sprite preview */}
-                <div style={styles.spriteWrap}>
+              <div className="stats-panel stone-panel">
+                <div className="sprite-preview">
                   <SpriteCanvas
                     race={form.race}
                     characterClass={form.class}
@@ -145,37 +144,36 @@ function CharacterBuilder() {
                   />
                 </div>
 
-                {/* Live title preview */}
-                <p style={styles.titlePreview}>
-                  <span style={styles.previewName}>{form.name || "Your hero"}</span>
-                  <span style={styles.previewThe}> the </span>
-                  <span style={styles.previewTitle}>{titlePreview}</span>
+                <p className="title-preview">
+                  <span className="preview-name">{form.name || "Your hero"}</span>
+                  <span className="preview-the"> the </span>
+                  <span className="preview-title">{titlePreview}</span>
                 </p>
 
-                <div style={styles.bonusBadge}>
-                  <span style={styles.bonusNum}>{bonusRemaining}</span>
-                  <span style={styles.bonusLabel}>bonus pts left</span>
+                <div className="bonus-badge">
+                  <span className="bonus-num">{bonusRemaining}</span>
+                  <span className="bonus-label">bonus pts left</span>
                 </div>
 
                 {["strength", "dexterity", "intelligence"].map((stat) => (
-                  <div key={stat} style={styles.statRow}>
-                    <span style={styles.statName}>{STAT_LABELS[stat]}</span>
-                    <span style={styles.statBase}>base {baseStats[stat]}</span>
-                    <div style={styles.bonusControls}>
-                      <button type="button" onClick={() => adjustBonus(stat, -1)}
-                        style={styles.adjBtn} disabled={bonus[stat] === 0}>−</button>
-                      <span style={styles.bonusValue}>+{bonus[stat]}</span>
-                      <button type="button" onClick={() => adjustBonus(stat, 1)}
-                        style={styles.adjBtn} disabled={bonusRemaining === 0}>+</button>
+                  <div key={stat} className="stat-row">
+                    <span className="stat-row-name">{STAT_LABELS[stat]}</span>
+                    <span className="stat-row-base">base {baseStats[stat]}</span>
+                    <div className="bonus-controls">
+                      <button type="button" className="adj-btn"
+                        onClick={() => adjustBonus(stat, -1)} disabled={bonus[stat] === 0}>−</button>
+                      <span className="bonus-val">+{bonus[stat]}</span>
+                      <button type="button" className="adj-btn"
+                        onClick={() => adjustBonus(stat, 1)} disabled={bonusRemaining === 0}>+</button>
                     </div>
-                    <span style={styles.statTotal}>{finalStats[stat]}</span>
+                    <span className="stat-total">{finalStats[stat]}</span>
                   </div>
                 ))}
               </div>
             )}
 
             {error && <p className="error-text">{error}</p>}
-            <button type="submit" className="btn-primary" style={styles.submitBtn}>
+            <button type="submit" className="btn-primary btn-full">
               Save to the Hall of Heroes
             </button>
           </form>
@@ -184,164 +182,5 @@ function CharacterBuilder() {
     </>
   );
 }
-
-const styles = {
-  page: {
-    display: "flex",
-    justifyContent: "center",
-    padding: "40px 24px",
-    boxSizing: "border-box",
-  },
-  panel: {
-    width: "100%",
-    maxWidth: "560px",
-    padding: "0 32px 32px",
-  },
-  headerBar: {
-    height: "6px",
-    background: "linear-gradient(90deg, #8b1a1a, #c9a84c, #8b1a1a)",
-    margin: "0 -32px 28px",
-    borderRadius: "4px 4px 0 0",
-  },
-  title: {
-    fontFamily: "'Cinzel', serif",
-    fontSize: "1.8rem",
-    color: "#2a1e10",
-    margin: "0 0 4px",
-    textAlign: "center",
-  },
-  subtitle: {
-    color: "#7a6a50",
-    fontStyle: "italic",
-    textAlign: "center",
-    margin: "0 0 24px",
-    fontSize: "0.95rem",
-  },
-  form: {
-    display: "flex",
-    flexDirection: "column",
-    gap: "12px",
-  },
-  label: {
-    fontFamily: "'Cinzel', serif",
-    fontSize: "0.78rem",
-    letterSpacing: "0.06em",
-    color: "#5a3e20",
-    display: "block",
-    marginBottom: "4px",
-  },
-  row: {
-    display: "flex",
-    gap: "12px",
-  },
-  col: {
-    flex: 1,
-    display: "flex",
-    flexDirection: "column",
-  },
-  statsPanel: {
-    padding: "16px 20px",
-    marginTop: "4px",
-  },
-  spriteWrap: {
-    display: "flex",
-    justifyContent: "center",
-    marginBottom: "16px",
-  },
-  titlePreview: {
-    textAlign: "center",
-    margin: "0 0 14px",
-    fontSize: "1.05rem",
-  },
-  previewName: {
-    color: "#c9a84c",
-    fontFamily: "'Cinzel', serif",
-    fontSize: "1rem",
-  },
-  previewThe: {
-    color: "#a09880",
-    fontStyle: "italic",
-  },
-  previewTitle: {
-    color: "#c9a84c",
-    fontFamily: "'Cinzel', serif",
-    fontWeight: "700",
-    fontSize: "1rem",
-  },
-  bonusBadge: {
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    marginBottom: "16px",
-  },
-  bonusNum: {
-    fontSize: "2rem",
-    fontFamily: "'Cinzel', serif",
-    color: "#c9a84c",
-    lineHeight: 1,
-  },
-  bonusLabel: {
-    fontSize: "0.75rem",
-    color: "#a09880",
-    letterSpacing: "0.05em",
-    textTransform: "uppercase",
-  },
-  statRow: {
-    display: "flex",
-    alignItems: "center",
-    gap: "10px",
-    marginBottom: "10px",
-  },
-  statName: {
-    fontFamily: "'Cinzel', serif",
-    fontSize: "0.8rem",
-    color: "#c8c8c8",
-    width: "100px",
-    letterSpacing: "0.04em",
-  },
-  statBase: {
-    fontSize: "0.8rem",
-    color: "#888880",
-    width: "54px",
-    textAlign: "right",
-  },
-  bonusControls: {
-    display: "flex",
-    alignItems: "center",
-    gap: "8px",
-    flex: 1,
-    justifyContent: "center",
-  },
-  adjBtn: {
-    width: "28px",
-    height: "28px",
-    fontSize: "1rem",
-    cursor: "pointer",
-    borderRadius: "3px",
-    border: "1px solid #5a3030",
-    backgroundColor: "#2a1a1a",
-    color: "#c8c8c8",
-    lineHeight: 1,
-  },
-  bonusValue: {
-    width: "28px",
-    textAlign: "center",
-    fontFamily: "'Cinzel', serif",
-    fontSize: "0.9rem",
-    color: "#c9a84c",
-  },
-  statTotal: {
-    fontFamily: "'Cinzel', serif",
-    fontSize: "1.2rem",
-    fontWeight: "700",
-    color: "#c9a84c",
-    width: "28px",
-    textAlign: "right",
-  },
-  submitBtn: {
-    marginTop: "8px",
-    width: "100%",
-  },
-};
 
 export default CharacterBuilder;

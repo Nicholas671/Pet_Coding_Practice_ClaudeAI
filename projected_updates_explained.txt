@@ -1,0 +1,231 @@
+===================================================
+  UPDATES EXPLAINED — Mythical Character Builder
+  Sessions 2 & 3 (Post-initial backend setup)
+===================================================
+
+
+-----------
+UPDATE 1 — CASTLE RPG THEME  (client/src/theme.css)
+-----------
+
+What changed:
+  A single global CSS file was created and imported into main.jsx so every
+  page in the app shares the same visual style automatically.
+
+What it does:
+  - Defines CSS variables (--crimson, --gold, --parchment, etc.) so colors
+    are consistent everywhere and easy to change in one place.
+  - Applies a stone brick background to the whole page using layered CSS
+    gradients — no image files needed.
+  - Loads two Google Fonts:
+      Cinzel       — a Roman-style serif used for all headings and labels.
+                     Gives the app a grand, medieval inscription feel.
+      Crimson Text — an elegant serif used for body text and inputs.
+  - Defines reusable CSS class helpers:
+      .parchment-panel  — warm tan/cream card with inset shadow (used for
+                          forms and character cards)
+      .stone-panel      — dark grey panel (used for the stat section in the
+                          character builder)
+      .btn-primary      — crimson gradient button with gold border
+      .btn-danger       — dark red button (used for "Banish"/delete)
+      .btn-outline      — transparent button with silver border (used for
+                          logout and download)
+      .parchment-input  — styled text/select input that looks like old paper
+      .error-text       — italic red error message styling
+
+How to use it in future:
+  Any new component can use className="parchment-panel" etc. without
+  writing new CSS. Just add a class name and the styles apply instantly.
+
+
+-----------
+UPDATE 2 — NAVBAR REDESIGN  (client/src/components/Navbar.jsx)
+-----------
+
+What changed:
+  The plain dark bar was replaced with a castle-themed sticky navigation bar.
+
+What it does:
+  - Stays pinned to the top of the screen as you scroll (position: sticky).
+  - Shows a gold "Mythical Characters" brand name flanked by red ⚔ sword
+    symbols.
+  - Nav links use the Cinzel font in silver, turning gold on hover.
+  - Logout uses the .btn-outline style (silver border, no background).
+  - A crimson bottom border acts as a decorative dividing line.
+
+
+-----------
+UPDATE 3 — LOGIN & REGISTER REDESIGN
+  (client/src/pages/Login.jsx, Register.jsx)
+-----------
+
+What changed:
+  Plain white centered forms were replaced with styled parchment panels.
+
+What it does:
+  - Both pages are centered vertically and horizontally on the stone background.
+  - The panel uses .parchment-panel for a warm paper look.
+  - A crimson-to-gold gradient stripe runs across the top of each panel —
+    a consistent decorative header used throughout the app.
+  - Flavor text was added:
+      Login    → "Enter the Realm" / "Speak your credentials, traveller"
+      Register → "Join the Realm"  / "Forge your legend, adventurer"
+  - All inputs use .parchment-input.
+  - The submit button uses .btn-primary (crimson gradient, gold border).
+  - Labels use the Cinzel font in small caps style.
+
+
+-----------
+UPDATE 4 — MY CHARACTERS REDESIGN  (client/src/pages/MyCharacters.jsx)
+-----------
+
+What changed:
+  The plain card list was replaced with a themed "Hall of Heroes" gallery.
+
+What it does:
+  - The page heading "Hall of Heroes" appears in gold with a decorative
+    gradient rule (red → gold → red) beneath it.
+  - Empty state: instead of plain text, shows a centered italic message
+    ("Your hall is empty, adventurer.") with a crimson button to go build.
+  - Character cards use .parchment-panel with the same crimson-gold stripe
+    at the top as the login panel — visual consistency.
+  - Each card shows:
+      Character name   — Cinzel font, dark ink
+      Class title      — small, crimson (includes adjective if stat ≥ 5)
+      Race             — italic, muted tan
+      Stat block       — STR / DEX / INT displayed as a mini trio
+      Banish button    — .btn-danger (dark red), full-width
+  - The delete button was renamed "Banish" for theme consistency.
+
+
+-----------
+UPDATE 5 — CHARACTER BUILDER REDESIGN  (client/src/pages/CharacterBuilder.jsx)
+-----------
+
+What changed:
+  The builder form was restyled to match the castle theme and gained a
+  side-by-side Race/Class layout.
+
+What it does:
+  - Wraps everything in a .parchment-panel with the crimson-gold header stripe.
+  - Title "Forge a Character" + subtitle in the Cinzel font.
+  - Race and Class dropdowns sit side by side in a two-column row for
+    a more compact, intentional layout.
+  - The stat section uses .stone-panel (dark background) to visually separate
+    it from the parchment form above — feels like reading from a stone tablet.
+  - The bonus point counter is displayed as a large gold number with a label
+    beneath it ("bonus pts left"), making it the focal point of the section.
+  - The live title preview shows the character name in gold and the class
+    title in bold gold: "Thorin the Stout Warrior".
+  - Stat rows show: Name | base X | − +1 + | total in gold.
+  - The submit button reads "Save to the Hall of Heroes".
+
+
+-----------
+UPDATE 6 — PIXEL SPRITE SYSTEM
+  (client/src/spriteData.js, client/src/components/SpriteCanvas.jsx)
+-----------
+
+spriteData.js — What it is:
+  A data file containing all the drawing instructions for every sprite.
+  Nothing visual lives here — it's just data and one function.
+
+  How sprites work:
+    Every sprite is a 32×32 pixel grid. Instead of actual image files,
+    each sprite is described as a list of rectangles:
+        [x, y, width, height, color]
+    These rectangles are drawn onto an HTML5 <canvas> element at runtime.
+
+  The data is split into layers:
+    RACE_SKIN       — base skin/scale color per race
+    RACE_FEATURE    — hair, beard, horns, scale details per race
+    RACE_EYES       — eye color per race
+    CLASS_COLORS    — armor primary, secondary, and leg colors per class
+    CLASS_ACCENT    — weapon highlight color per class
+    RACE_BODIES     — the full body rectangle list per race (a function that
+                      receives the color values and returns the rect array)
+    CLASS_WEAPONS   — weapon/equipment rects drawn on top of the body
+
+  The drawSprite() function:
+    Takes a canvas context, race, class, stats, and a scale value.
+    Draws the stone background, ground line, body, then weapon in order.
+    If any stat is 8 or higher, adds a faint white shimmer on the weapon.
+    Scale controls the pixel size — scale 1 = 32px, scale 5 = 160px.
+
+SpriteCanvas.jsx — What it is:
+  A React component that wraps a <canvas> element.
+  It calls drawSprite() whenever race, class, or stats change, so the
+  sprite redraws automatically as you build your character.
+  Includes a "↓ Download Sprite" button that exports the canvas as a PNG.
+
+  image-rendering: pixelated — a CSS property that tells the browser NOT
+  to blur the canvas when scaling it up, keeping pixels sharp and crisp.
+
+Where sprites appear:
+  Character Builder — 160px live preview in the stat panel. Updates in
+                      real time as you spend bonus points.
+  My Characters     — 96px sprite at the top of each character card.
+                      Includes its own download button per character.
+
+Race visual identities:
+  Human      — Brown hair, standard proportions
+  Elf        — Golden hair, pointed ears, slim build, long arms
+  Dwarf      — Wide face, thick red beard, heavy boots, stocky
+  Orc        — Mohawk, tusks, red eyes, massive torso, huge arms
+  Halfling   — Round face, rosy cheeks, short arms, big hairy feet
+  Dragonborn — Horns, snout, scale shimmer across body, tail, claws
+
+Class weapon overlays:
+  Warrior     — Sword (grey blade, brown handle)
+  Mage        — Staff with glowing blue orb
+  Rogue       — Two daggers (one each side)
+  Paladin     — Sword + gold-cross shield on the off-hand
+  Ranger      — Bow with arrow nocked
+  Necromancer — Dark staff topped with a glowing skull
+
+
+-----------
+UPDATE 7 — SPRITE EXPORTER  (client/export-sprites.html)
+-----------
+
+What it is:
+  A standalone HTML file you can open directly in any browser (no server
+  needed). It has no dependencies except JSZip loaded from a CDN.
+
+What it does:
+  - Renders all 36 sprite combinations (6 races × 6 classes) on screen
+    in a grid so you can see them all at once.
+  - "Download All as ZIP" button:
+      Draws each sprite at 1× (32×32 native pixels — the true pixel art size)
+      onto a temporary canvas, converts it to a PNG, and bundles all 36 into
+      a single sprites.zip file using JSZip.
+  - The ZIP contains a sprites/ folder with files named:
+        Human_Warrior.png
+        Human_Mage.png
+        Elf_Warrior.png
+        ... (all 36)
+
+How to use it:
+  1. Open client/export-sprites.html in your browser
+     (double-click it or drag it into Chrome/Edge/Firefox)
+  2. Click "Download All as ZIP"
+  3. Extract sprites.zip — you'll find the sprites/ folder inside
+  4. Move that folder wherever you need it for future animation work
+
+Why 32×32 in the ZIP:
+  When animating pixel art, you always want the original 1× size.
+  You scale UP in your animation tool, never store it pre-scaled.
+
+
+-----------
+WHAT'S NEXT (planned)
+-----------
+
+Mobile Responsiveness:
+  The app currently looks best on desktop. The plan is to add CSS media
+  queries so that on smaller screens:
+    - The navbar collapses or stacks vertically
+    - Character cards fill the screen width instead of a fixed 200px
+    - The builder form fills the viewport without overflow
+    - The stat rows reflow cleanly on narrow screens
+  Goal: be able to demo the app on a phone.
