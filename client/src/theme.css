@@ -1,0 +1,211 @@
+/* =============================================
+   CASTLE RPG THEME — Global Styles & Variables
+   ============================================= */
+
+:root {
+  --stone-dark:      #161310;
+  --stone-mid:       #252017;
+  --stone-light:     #3a342a;
+  --crimson:         #8b1a1a;
+  --crimson-light:   #b22222;
+  --crimson-glow:    #d44;
+  --parchment:       #e8d5b0;
+  --parchment-dark:  #c4a97d;
+  --parchment-panel: #f2e8d0;
+  --silver:          #c8c8c8;
+  --silver-dark:     #888880;
+  --gold:            #c9a84c;
+  --gold-dark:       #a07830;
+  --text-light:      #f0e6d3;
+  --text-dim:        #a09880;
+  --text-dark:       #2a1e10;
+  --red-danger:      #922;
+}
+
+/* Stone brick pattern via repeating gradient */
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  font-family: 'Crimson Text', Georgia, serif;
+  font-size: 1.1rem;
+  color: var(--text-light);
+  background-color: var(--stone-dark);
+  background-image:
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 39px,
+      rgba(0,0,0,0.35) 39px,
+      rgba(0,0,0,0.35) 40px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      transparent,
+      transparent 79px,
+      rgba(0,0,0,0.25) 79px,
+      rgba(0,0,0,0.25) 80px
+    ),
+    linear-gradient(160deg, #1e1810 0%, #12100c 50%, #1a1510 100%);
+}
+
+/* Offset the brick pattern on every other row */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 19px,
+      rgba(255,255,255,0.015) 19px,
+      rgba(255,255,255,0.015) 20px
+    );
+  z-index: 0;
+}
+
+#root {
+  position: relative;
+  z-index: 1;
+}
+
+h1, h2, h3, h4 {
+  font-family: 'Cinzel', serif;
+  letter-spacing: 0.04em;
+}
+
+a {
+  color: var(--gold);
+  text-decoration: none;
+}
+
+a:hover {
+  color: var(--parchment);
+  text-decoration: underline;
+}
+
+/* ---- Shared reusable classes ---- */
+
+/* Parchment panel — used for forms and cards */
+.parchment-panel {
+  background: linear-gradient(160deg, var(--parchment-panel) 0%, var(--parchment) 100%);
+  border: 2px solid var(--parchment-dark);
+  box-shadow:
+    inset 0 0 40px rgba(0,0,0,0.15),
+    0 4px 24px rgba(0,0,0,0.6),
+    0 0 0 1px rgba(0,0,0,0.4);
+  color: var(--text-dark);
+  border-radius: 4px;
+}
+
+/* Stone panel — darker version for stat sections etc. */
+.stone-panel {
+  background: linear-gradient(160deg, var(--stone-mid) 0%, var(--stone-light) 100%);
+  border: 1px solid var(--silver-dark);
+  box-shadow: inset 0 0 20px rgba(0,0,0,0.4);
+  color: var(--text-light);
+  border-radius: 4px;
+}
+
+/* Primary crimson button */
+.btn-primary {
+  font-family: 'Cinzel', serif;
+  font-size: 0.95rem;
+  letter-spacing: 0.08em;
+  background: linear-gradient(180deg, var(--crimson-light) 0%, var(--crimson) 100%);
+  color: var(--parchment);
+  border: 1px solid var(--gold-dark);
+  border-radius: 3px;
+  padding: 10px 20px;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.1);
+  transition: background 0.2s, box-shadow 0.2s;
+}
+
+.btn-primary:hover {
+  background: linear-gradient(180deg, #c83030 0%, var(--crimson-light) 100%);
+  box-shadow: 0 2px 14px rgba(180,30,30,0.5), inset 0 1px 0 rgba(255,255,255,0.15);
+}
+
+/* Danger/delete button */
+.btn-danger {
+  font-family: 'Cinzel', serif;
+  font-size: 0.8rem;
+  letter-spacing: 0.06em;
+  background: linear-gradient(180deg, #6a1010 0%, #420a0a 100%);
+  color: var(--silver);
+  border: 1px solid #5a1010;
+  border-radius: 3px;
+  padding: 6px 14px;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.5);
+  transition: background 0.2s;
+}
+
+.btn-danger:hover {
+  background: linear-gradient(180deg, var(--crimson) 0%, #6a1010 100%);
+}
+
+/* Outline button (logout, secondary) */
+.btn-outline {
+  font-family: 'Cinzel', serif;
+  font-size: 0.8rem;
+  letter-spacing: 0.06em;
+  background: transparent;
+  color: var(--silver);
+  border: 1px solid var(--silver-dark);
+  border-radius: 3px;
+  padding: 5px 14px;
+  cursor: pointer;
+  transition: border-color 0.2s, color 0.2s;
+}
+
+.btn-outline:hover {
+  border-color: var(--gold);
+  color: var(--gold);
+}
+
+/* Parchment-style form inputs */
+.parchment-input {
+  font-family: 'Crimson Text', Georgia, serif;
+  font-size: 1rem;
+  padding: 9px 12px;
+  background: rgba(255,255,255,0.6);
+  border: 1px solid var(--parchment-dark);
+  border-radius: 3px;
+  color: var(--text-dark);
+  width: 100%;
+  box-sizing: border-box;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.parchment-input:focus {
+  border-color: var(--crimson);
+  box-shadow: 0 0 0 2px rgba(139,26,26,0.2);
+}
+
+/* Decorative divider */
+.divider {
+  border: none;
+  border-top: 1px solid var(--parchment-dark);
+  margin: 16px 0;
+}
+
+/* Gold section heading */
+.section-title {
+  font-family: 'Cinzel', serif;
+  color: var(--gold);
+  font-size: 1.4rem;
+  margin: 0 0 20px 0;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.5);
+}
+
+.error-text {
+  color: var(--red-danger);
+  font-style: italic;
+  font-size: 0.95rem;
+  margin: 4px 0;
+}

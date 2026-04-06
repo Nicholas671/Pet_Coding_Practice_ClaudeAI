@@ -11,7 +11,7 @@ CREATE TABLE characters (
   user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
   name VARCHAR(100) NOT NULL,
   race VARCHAR(50) NOT NULL,
-  class VARCHAR(50) NOT NULL,
+  "class" VARCHAR(50) NOT NULL,
   strength INTEGER NOT NULL,
   dexterity INTEGER NOT NULL,
   intelligence INTEGER NOT NULL,

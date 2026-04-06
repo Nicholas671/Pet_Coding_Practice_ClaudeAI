@@ -71,13 +71,14 @@ const login = async (req, res) => {
     const { email, password } = req.body;
 
     if (!email || !password) {
-      return res.status(400).json({ message: "Email and password are required" });
+      return res
+        .status(400)
+        .json({ message: "Email and password are required" });
     }
 
-    const user = await pool.query(
-      "SELECT * FROM users WHERE email = $1",
-      [email]
-    );
+    const user = await pool.query("SELECT * FROM users WHERE email = $1", [
+      email,
+    ]);
 
     if (user.rows.length === 0) {
       return res.status(401).json({ message: "Invalid credentials" });
@@ -92,10 +93,17 @@ const login = async (req, res) => {
     const token = jwt.sign(
       { userId: user.rows[0].id },
       process.env.JWT_SECRET,
-      { expiresIn: "1h" }
+      { expiresIn: "1h" },
     );
 
-    res.json({ token, user: { id: user.rows[0].id, username: user.rows[0].username, email: user.rows[0].email } });
+    res.json({
+      token,
+      user: {
+        id: user.rows[0].id,
+        username: user.rows[0].username,
+        email: user.rows[0].email,
+      },
+    });
   } catch (err) {
     console.error(err.message);
     res.status(500).json({ message: "Server error" });

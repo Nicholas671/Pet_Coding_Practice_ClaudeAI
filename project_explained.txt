@@ -1,0 +1,175 @@
+===================================================
+  PROJECT EXPLANATION — Mythical Character Builder
+  PERN Stack (PostgreSQL, Express, React, Node.js)
+===================================================
+
+
+-----------
+THE DATABASE  (server/db/)
+-----------
+
+index.js
+  Creates a "pool" — a reusable connection to PostgreSQL.
+  Instead of opening and closing a new connection for every request,
+  a pool keeps several connections ready to go, which is faster.
+  It reads your DB credentials (username, password, etc.) from the .env file.
+
+schema.sql
+  Defines the shape of your data in two tables:
+    - users: stores registered accounts (username, email, hashed password)
+    - characters: stores characters, each linked to a user via user_id
+
+
+-----------
+AUTHENTICATION  (server/controllers/authController.js + server/routes/auth.js)
+-----------
+
+authController.js
+  register:
+    - Validates the incoming username, email, and password
+    - Checks the database to make sure the username/email isn't already taken
+    - Hashes the password with bcrypt (so we never store plain-text passwords)
+    - Saves the new user to the database
+    - Returns a JWT token the client can use to prove who they are
+
+  login:
+    - Looks up the user by email
+    - Uses bcrypt to compare the submitted password against the stored hash
+    - If they match, returns a new JWT token
+
+routes/auth.js
+  Maps two URLs to the controller functions above:
+    POST /api/auth/register  →  register
+    POST /api/auth/login     →  login
+
+
+-----------
+JWT MIDDLEWARE  (server/middleware/auth.js)
+-----------
+
+A "middleware" is a function that runs before your route handler.
+This one protects routes that require a login.
+
+How it works:
+  1. Reads the Authorization header from the incoming request
+     (the client sends it as: "Bearer <token>")
+  2. Verifies the token is valid and hasn't expired using the JWT_SECRET
+  3. If valid, it extracts the userId from the token and attaches it to the
+     request so the next function (the controller) can use it
+  4. If invalid or missing, it sends back a 401/403 error immediately
+
+
+-----------
+CHARACTER API  (server/controllers/characterController.js + server/routes/characters.js)
+-----------
+
+characterController.js
+  getCharacters:
+    - Queries the database for all characters where user_id matches the
+      logged-in user (taken from the JWT via middleware)
+    - Returns them as a list
+
+  createCharacter:
+    - Validates all required fields (name, race, class, stats)
+    - Inserts a new row into the characters table linked to the logged-in user
+    - Returns the newly created character
+
+  deleteCharacter:
+    - Checks the character exists AND belongs to the logged-in user
+      (so users can't delete each other's characters)
+    - Deletes it from the database
+
+routes/characters.js
+  Maps URLs to the controller functions, and puts authenticateToken in front
+  of all of them so they're protected:
+    GET    /api/characters      →  getCharacters
+    POST   /api/characters      →  createCharacter
+    DELETE /api/characters/:id  →  deleteCharacter
+
+
+-----------
+THE SERVER ENTRY POINT  (server/server.js)
+-----------
+
+This is the file that starts everything.
+  - Creates the Express app
+  - Sets up CORS (allows the React frontend to talk to it)
+  - Parses incoming JSON request bodies
+  - Registers the two route groups (/api/auth and /api/characters)
+  - Starts listening on port 5000
+
+
+-----------
+THE REACT FRONTEND  (client/src/)
+-----------
+
+api.js
+  A pre-configured axios instance that:
+    - Always sends requests to http://localhost:5000/api
+    - Automatically attaches the JWT token from localStorage to every request
+      so you don't have to do it manually in every component
+
+App.jsx
+  The root of the React app.
+  Sets up React Router with these pages:
+    /login       →  Login page (public)
+    /register    →  Register page (public)
+    /characters  →  My Characters page (protected — must be logged in)
+    /builder     →  Character Builder page (protected — must be logged in)
+  Any unknown URL redirects to /login.
+  "Protected" routes check for a token in localStorage. If missing, the user
+  is sent to /login automatically.
+
+components/Navbar.jsx
+  The navigation bar shown at the top of protected pages.
+  Has links to "My Characters" and "Build Character", plus a Logout button.
+  Logging out removes the token from localStorage and redirects to /login.
+
+pages/Login.jsx
+  A simple form with email and password fields.
+  On submit, calls POST /api/auth/login and saves the returned token.
+  Then redirects to /characters.
+
+pages/Register.jsx
+  A form with username, email, and password fields.
+  On submit, calls POST /api/auth/register and saves the returned token.
+  Then redirects to /characters.
+
+pages/MyCharacters.jsx
+  When the page loads (useEffect), it fetches the user's characters from the API.
+  Displays each character in a card with their stats.
+  Has a Delete button per card that calls the delete API and removes it from
+  the screen without needing to reload the page.
+
+pages/CharacterBuilder.jsx
+  A form for building a new character.
+  Race and Class are dropdown menus.
+  Strength, Dexterity, and Intelligence are sliders (1–20).
+  On submit, calls POST /api/characters and redirects to /characters.
+
+
+-----------
+HOW IT ALL FITS TOGETHER
+-----------
+
+1. User visits the site → redirected to /login
+2. User registers → token saved in browser → sent to /characters
+3. Every API request automatically includes the token (via api.js interceptor)
+4. The backend middleware checks the token before allowing access to characters
+5. Characters are tied to the user's account, so each user sees only their own
+
+
+-----------
+HOW TO RUN THE PROJECT
+-----------
+
+Backend:
+  cd server
+  node server.js        (or: npx nodemon server.js for auto-restart)
+
+Frontend:
+  cd client
+  npm run dev
+
+Then open http://localhost:5173 in your browser.
+Make sure PostgreSQL is running and you've executed schema.sql first.
