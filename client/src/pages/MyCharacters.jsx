@@ -48,7 +48,9 @@ function MyCharacters() {
           <div className="empty-state">
             <p>Your hall is empty, adventurer.</p>
             <Link to="/builder">
-              <button className="btn-primary">Forge Your First Character</button>
+              <button className="btn-primary">
+                Forge Your First Character
+              </button>
             </Link>
           </div>
         ) : (
@@ -70,12 +72,34 @@ function MyCharacters() {
                 <div className="char-card-info">
                   <h3 className="char-name">{char.name}</h3>
                   <p className="char-title">
-                    {getTitle(char.race, char.class, char.strength, char.dexterity, char.intelligence)}
+                    {getTitle(
+                      char.race,
+                      char.class,
+                      char.strength,
+                      char.dexterity,
+                      char.intelligence,
+                    )}
                   </p>
                   <hr className="char-divider" />
                   <p className="char-race">{char.race}</p>
+                  {char.backstory && (
+                    <p
+                      style={{
+                        fontStyle: "italic",
+                        fontSize: "0.85rem",
+                        color: "#5a3e20",
+                      }}
+                    >
+                      {char.backstory}
+                    </p>
+                  )}
+
                   <div className="stat-trio">
-                    {[["STR", char.strength], ["DEX", char.dexterity], ["INT", char.intelligence]].map(([label, val]) => (
+                    {[
+                      ["STR", char.strength],
+                      ["DEX", char.dexterity],
+                      ["INT", char.intelligence],
+                    ].map(([label, val]) => (
                       <div key={label} className="stat-trio-item">
                         <span className="stat-trio-label">{label}</span>
                         <span className="stat-trio-val">{val}</span>
@@ -84,7 +108,11 @@ function MyCharacters() {
                   </div>
                 </div>
 
-                <button onClick={() => handleDelete(char.id)} className="btn-danger" style={{ width: "100%", marginTop: "8px" }}>
+                <button
+                  onClick={() => handleDelete(char.id)}
+                  className="btn-danger"
+                  style={{ width: "100%", marginTop: "8px" }}
+                >
                   Banish
                 </button>
               </div>
