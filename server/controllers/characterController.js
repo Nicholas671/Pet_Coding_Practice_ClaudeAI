@@ -5,7 +5,7 @@ const getCharacters = async (req, res) => {
   try {
     const characters = await pool.query(
       "SELECT * FROM characters WHERE user_id = $1 ORDER BY created_at DESC",
-      [req.userId]
+      [req.userId],
     );
     res.json(characters.rows);
   } catch (err) {
@@ -17,17 +17,43 @@ const getCharacters = async (req, res) => {
 // POST /api/characters — create a new character for the logged-in user
 const createCharacter = async (req, res) => {
   try {
-    const { name, race, class: characterClass, strength, dexterity, intelligence } = req.body;
+    const {
+      name,
+      race,
+      class: characterClass,
+      strength,
+      dexterity,
+      intelligence,
+      backstory,
+    } = req.body;
 
-    if (!name || !race || !characterClass || strength == null || dexterity == null || intelligence == null) {
-      return res.status(400).json({ message: "All character fields are required" });
+    if (
+      !name ||
+      !race ||
+      !characterClass ||
+      strength == null ||
+      dexterity == null ||
+      intelligence == null
+    ) {
+      return res
+        .status(400)
+        .json({ message: "All character fields are required" });
     }
 
     const newCharacter = await pool.query(
-      `INSERT INTO characters (user_id, name, race, "class", strength, dexterity, intelligence)
-       VALUES ($1, $2, $3, $4, $5, $6, $7)
+      `INSERT INTO characters (user_id, name, race, "class", strength, dexterity, intelligence, backstory)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
        RETURNING *`,
-      [req.userId, name, race, characterClass, strength, dexterity, intelligence]
+      [
+        req.userId,
+        name,
+        race,
+        characterClass,
+        strength,
+        dexterity,
+        intelligence,
+        backstory || null,
+      ],
     );
 
     res.status(201).json(newCharacter.rows[0]);
@@ -44,7 +70,7 @@ const deleteCharacter = async (req, res) => {
 
     const character = await pool.query(
       "SELECT id FROM characters WHERE id = $1 AND user_id = $2",
-      [id, req.userId]
+      [id, req.userId],
     );
 
     if (character.rows.length === 0) {
