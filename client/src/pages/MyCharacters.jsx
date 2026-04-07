@@ -30,7 +30,7 @@ function MyCharacters() {
     try {
       await api.delete(`/characters/${id}`);
       setCharacters(characters.filter((c) => c.id !== id));
-    } catch (err) {
+    } catch {
       setError("Failed to delete character");
     }
   };

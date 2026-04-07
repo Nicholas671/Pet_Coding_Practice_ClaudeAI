@@ -44,8 +44,9 @@ const getBaseStats = (race, characterClass) => {
 const STAT_LABELS = { strength: "Strength", dexterity: "Dexterity", intelligence: "Intelligence" };
 
 function CharacterBuilder() {
-  const [form, setForm] = useState({ name: "", race: "", class: "" });
+  const [form, setForm] = useState({ name: "", race: "", class: "", backstory: "" });
   const [bonus, setBonus] = useState(EMPTY_BONUS);
+  const [showBackstory, setShowBackstory] = useState(false);
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
@@ -113,6 +114,25 @@ function CharacterBuilder() {
               onChange={handleFormChange}
               className="parchment-input"
             />
+
+            {!showBackstory ? (
+              <button type="button" className="btn-outline" onClick={() => setShowBackstory(true)}>
+                Give Them Lore?
+              </button>
+            ) : (
+              <>
+                <label className="builder-label">Backstory</label>
+                <textarea
+                  name="backstory"
+                  placeholder="Who are they? Where do they come from?"
+                  value={form.backstory}
+                  onChange={handleFormChange}
+                  className="parchment-input"
+                  rows={4}
+                  style={{ resize: "none", color: "#2a1e10" }}
+                />
+              </>
+            )}
 
             <div className="builder-row">
               <div className="builder-col">
