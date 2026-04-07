@@ -1,8 +1,9 @@
 import axios from "axios";
 
-// All API requests go to this base URL
+// In development this falls back to localhost.
+// In production, Render injects VITE_API_URL at build time.
 const api = axios.create({
-  baseURL: "http://localhost:5000/api",
+  baseURL: import.meta.env.VITE_API_URL || "http://localhost:5000/api",
 });
 
 // Before every request, attach the JWT token from localStorage if one exists

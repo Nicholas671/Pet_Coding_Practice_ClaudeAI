@@ -7,7 +7,10 @@ const characterRoutes = require("./routes/characters");
 
 const app = express();
 
-app.use(cors());
+// Allow requests from the frontend — localhost in dev, Render URL in production
+app.use(cors({
+  origin: process.env.CLIENT_URL || "http://localhost:5173",
+}));
 app.use(express.json());
 
 // Log every incoming request so we can see what the server receives
